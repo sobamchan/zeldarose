@@ -328,6 +328,10 @@ class SavePretrainedModelCallback(pl.Callback):
     ),
 )
 @click.option("--verbose", is_flag=True, help="More detailed logs")
+@click.option(
+    "--wandb-project-name",
+    default=None,
+)
 def main(
     accelerator: str,
     cache_dir: Optional[pathlib.Path],
@@ -356,6 +360,7 @@ def main(
     val_check_period: Optional[int],
     val_path: Optional[str],
     verbose: bool,
+    wandb_project_name: Optional[str],
 ):
     """Train a Transformer model.
 
@@ -533,6 +538,14 @@ def main(
     if val_check_period is not None:
         additional_kwargs["val_check_interval"] = val_check_period
 
+    pl_logger = True
+    if wandb_project_name is not None:
+        try:
+            mod = __import__("pytorch_lightning.loggers", None, None, ["loggers"])
+            pl_logger = mod.WandbLogger(project=wandb_project_name)
+        except ImportError:
+            return
+
     trainer = pl.Trainer(
         accumulate_grad_batches=accumulate_grad_batches,
         accelerator=accelerator,
@@ -545,6 +558,7 @@ def main(
         max_steps=max_steps,
         num_nodes=num_nodes,
         strategy=strategy,
+        logger=pl_logger,
         **additional_kwargs,
     )
 
