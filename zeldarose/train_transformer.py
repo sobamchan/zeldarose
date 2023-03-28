@@ -14,6 +14,7 @@ from pytorch_lightning import (
     strategies as pl_strategies,
 )
 from pytorch_lightning.utilities import types as pl_types
+
 import rich
 import tomli
 import torch
@@ -511,6 +512,7 @@ def main(
     callbacks: List[pl.Callback] = [
         pl_callbacks.RichProgressBar(console_kwargs={"stderr": True}),
         pl_callbacks.LearningRateMonitor("step"),
+        pl_callbacks.ModelCheckpoint(monitor="validation/loss", save_top_k=1, mode="min")
     ]
     if epoch_save_period is not None or step_save_period is not None:
         training_model.save_transformer(out_dir / "partway_models" / "initial", tokenizer)
