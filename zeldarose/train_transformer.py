@@ -542,7 +542,7 @@ def main(
     if wandb_project_name is not None:
         try:
             mod = __import__("pytorch_lightning.loggers", None, None, ["loggers"])
-            pl_logger = mod.WandbLogger(project=wandb_project_name)
+            pl_logger = mod.WandbLogger(project=wandb_project_name, save_dir=out_dir)
         except ImportError:
             return
 
