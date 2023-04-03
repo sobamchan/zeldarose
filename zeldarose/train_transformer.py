@@ -512,7 +512,12 @@ def main(
     callbacks: List[pl.Callback] = [
         pl_callbacks.RichProgressBar(console_kwargs={"stderr": True}),
         pl_callbacks.LearningRateMonitor("step"),
-        pl_callbacks.ModelCheckpoint(monitor="validation/loss", save_top_k=1, mode="min")
+        pl_callbacks.ModelCheckpoint(
+            monitor="validation/perplexity",
+            save_top_k=1,
+            mode="min",
+            filename='{epoch}-{validation_perplexity:.2f}'
+        )
     ]
     if epoch_save_period is not None or step_save_period is not None:
         training_model.save_transformer(out_dir / "partway_models" / "initial", tokenizer)
