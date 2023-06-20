@@ -333,6 +333,10 @@ class SavePretrainedModelCallback(pl.Callback):
     "--wandb-project-name",
     default=None,
 )
+@click.option(
+    "--wandb-entity",
+    default=None,
+)
 def main(
     accelerator: str,
     cache_dir: Optional[pathlib.Path],
@@ -362,6 +366,7 @@ def main(
     val_path: Optional[str],
     verbose: bool,
     wandb_project_name: Optional[str],
+    wandb_entity: Optional[str],
 ):
     """Train a Transformer model.
 
@@ -549,7 +554,7 @@ def main(
     if wandb_project_name is not None:
         try:
             mod = __import__("pytorch_lightning.loggers", None, None, ["loggers"])
-            pl_logger = mod.WandbLogger(project=wandb_project_name, save_dir=out_dir)
+            pl_logger = mod.WandbLogger(project=wandb_project_name, entity=wandb_entity, save_dir=out_dir)
         except ImportError:
             return
 
