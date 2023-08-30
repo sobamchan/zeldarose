@@ -554,7 +554,12 @@ def main(
     if wandb_project_name is not None:
         try:
             mod = __import__("pytorch_lightning.loggers", None, None, ["loggers"])
-            pl_logger = mod.WandbLogger(project=wandb_project_name, entity=wandb_entity, save_dir=out_dir)
+            pl_logger = mod.WandbLogger(
+                project=wandb_project_name,
+                entity=wandb_entity,
+                save_dir=out_dir,
+                group="ddp"
+            )
         except ImportError:
             return
 
